@@ -11,9 +11,9 @@ HM_EPISODES = 1000000
 MOVE_PENALTY = 1
 LOSE_PENALTY = 300
 WIN_REWARD = 100
-epsilon = 0.99
+epsilon = 0.999
 EPS_DECAY = 0.99999  # Every episode will be epsilon*EPS_DECAY
-SHOW_EVERY = 100  # how often to play through env visually.
+SHOW_EVERY = 10000  # how often to play through env visually.
 
 LEARNING_RATE = 0.1
 DISCOUNT = 0.95
@@ -147,6 +147,8 @@ for episode in range(HM_EPISODES):
             reward = WIN_REWARD/10
         elif (RoundedX[0] > win_lower and RoundedX[0] < win_upper) and (RoundedX[1] == lose_y):
             reward = -LOSE_PENALTY
+        elif RoundedX[1] == 0:
+            reward = -LOSE_PENALTY
         else:
             reward = -MOVE_PENALTY
 
@@ -168,7 +170,9 @@ for episode in range(HM_EPISODES):
             break
 
     episode_rewards.append(episode_reward)
-    epsilon *= EPS_DECAY
+
+    if epsilon > 30:
+        epsilon *= EPS_DECAY
 
 moving_avg = np.convolve(episode_rewards, np.ones((SHOW_EVERY,))/SHOW_EVERY, mode='valid')
 
