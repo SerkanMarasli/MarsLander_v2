@@ -78,7 +78,7 @@ def action(choice):
     return rotate, thrust
 
 if start_q_table is None:
-    q_table = np.zeros(shape=(500,700,9))
+    q_table = -1*np.ones(shape=(500,700,9)) # inital start with -1
 
 else:
     with open(start_q_table, "rb") as f:
