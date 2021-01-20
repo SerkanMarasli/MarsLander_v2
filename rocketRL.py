@@ -144,7 +144,7 @@ for episode in range(HM_EPISODES):
             and (V[0] <= 20 and V[1] <= 40) and (rotate <= 10):
             reward == WIN_REWARD
         elif (RoundedX[0] > win_lower and RoundedX[0] < win_upper) and (RoundedX[1] == win_y):
-            reward = WIN_REWARD/5
+            reward = WIN_REWARD/10
         elif (RoundedX[0] > win_lower and RoundedX[0] < win_upper) and (RoundedX[1] == lose_y):
             reward = -LOSE_PENALTY
         else:
