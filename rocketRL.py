@@ -170,7 +170,7 @@ for episode in range(HM_EPISODES):
     episode_rewards.append(episode_reward)
     epsilon *= EPS_DECAY
 
-moving_avg = np.convolve(epiosde_rewards, np.ones((SHOW_EVERY,))/SHOW_EVERY, mode='valid')
+moving_avg = np.convolve(episode_rewards, np.ones((SHOW_EVERY,))/SHOW_EVERY, mode='valid')
 
 plt.plot([i for i in range(len(moving_avg))], moving_avg)
 plt.ylabel(f"Reward {SHOW_EVERY}ma")
