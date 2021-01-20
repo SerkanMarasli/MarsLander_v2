@@ -8,7 +8,7 @@ from matplotlib import style
 import time
 
 style.use("ggplot")
-
+testt
 HM_EPISODES = 1000000
 MOVE_PENALTY = 1
 LOSE_PENALTY = 300
