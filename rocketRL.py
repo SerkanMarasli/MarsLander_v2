@@ -7,7 +7,7 @@ import time
 
 style.use("ggplot")
 
-HM_EPISODES = 1000000
+HM_EPISODES = 2000000
 MOVE_PENALTY = 1
 LOSE_PENALTY = 300
 WIN_REWARD = 100
@@ -181,4 +181,7 @@ plt.ylabel(f"Reward {SHOW_EVERY}ma")
 plt.xlabel("episode #")
 plt.show()
 
+with open(f"qtable-{int(time.time())}.pickle", "wb") as f:
+    pickle.dump(q_table, f)
+    
 # %%
