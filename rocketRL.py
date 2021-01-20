@@ -11,9 +11,9 @@ HM_EPISODES = 1000000
 MOVE_PENALTY = 1
 LOSE_PENALTY = 300
 WIN_REWARD = 100
-epsilon = 0.9
+epsilon = 0.99
 EPS_DECAY = 0.99999  # Every episode will be epsilon*EPS_DECAY
-SHOW_EVERY = 1000  # how often to play through env visually.
+SHOW_EVERY = 100  # how often to play through env visually.
 
 LEARNING_RATE = 0.1
 DISCOUNT = 0.95
@@ -32,14 +32,14 @@ d = {1: (255, 175, 0),
      3: (0, 0, 255)}
 
 def WinSection():
-    WinSectionX_lower = 300
-    WinSectionX_upper = 500
+    WinSectionX_lower = 400
+    WinSectionX_upper = 450
     WinSectionY = 200
     return WinSectionX_lower, WinSectionX_upper, WinSectionY
 
 def LoseSection():
-    LoseSectionX_lower = 300
-    LoseSectionX_upper = 500
+    LoseSectionX_lower = 400
+    LoseSectionX_upper = 450
     LoseSectionY = 200 - 1
     return LoseSectionX_lower, LoseSectionX_upper, LoseSectionY
 
