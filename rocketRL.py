@@ -7,13 +7,13 @@ import time
 
 style.use("ggplot")
 
-HM_EPISODES = 1000000
+HM_EPISODES = 1250000
 MOVE_PENALTY = 1
 LOSE_PENALTY = 300
 WIN_REWARD = 100
 epsilon = 0.999
 EPS_DECAY = 0.99999  # Every episode will be epsilon*EPS_DECAY
-SHOW_EVERY = 1000  # how often to play through env visually.
+SHOW_EVERY = 10000  # how often to play through env visually.
 
 LEARNING_RATE = 0.1
 DISCOUNT = 0.95
@@ -94,7 +94,7 @@ for episode in range(HM_EPISODES):
     win_lower, win_upper, win_y = WinSection()
     lose_lower, lose_upper, lose_y = LoseSection()
 
-    dt = 0.1
+    dt = 0.5
 
     if episode % SHOW_EVERY == 0:
         print(f"on #{episode}, epsilon is {epsilon}")
@@ -102,7 +102,7 @@ for episode in range(HM_EPISODES):
     
     episode_reward = 0
 
-    for i in range(500):
+    for i in range(250):
 
         if X[0] >= 250:
             X[0] = 249
