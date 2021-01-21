@@ -90,6 +90,7 @@ for episode in range(HM_EPISODES):
     X = [10., 249.]
     V = [0., 0.]
     rotate = 0
+    cumulativePower = 0
     win_lower, win_upper, win_y = WinSection()
     lose_lower, lose_upper, lose_y = LoseSection()
 
@@ -132,7 +133,6 @@ for episode in range(HM_EPISODES):
 
         rotate_rad = rotate * np.pi / 180
 
-        cumulativePower = 0
         cumulativePower += power
 
         if cumulativePower >= 5:
