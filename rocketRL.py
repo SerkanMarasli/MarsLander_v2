@@ -75,7 +75,7 @@ def action(choice):
         rotateX = 1
         thrust = 0.5
 
-    return rotate, thrust
+    return rotateX, thrust
 
 if start_q_table is None:
     q_table = -1*np.ones(shape=(250,250,9)) # inital start with -1
