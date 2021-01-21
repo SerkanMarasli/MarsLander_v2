@@ -7,7 +7,7 @@ import time
 
 style.use("ggplot")
 
-HM_EPISODES = 1250000
+HM_EPISODES = 2000000
 MOVE_PENALTY = 1
 LOSE_PENALTY = 300
 WIN_REWARD = 100
@@ -48,31 +48,31 @@ def action(choice):
     9 total actions
     '''
     if choice == 0:
-        rotate = 0
+        rotateX = 0
         thrust = 0
     elif choice == 1:
-        rotate = -1
+        rotateX = -1
         thrust = 0
     elif choice == 2:
-        rotate = 1
+        rotateX = 1
         thrust = 0
     elif choice == 3:
-        rotate = 0
+        rotateX = 0
         thrust = 0.5
     elif choice == 4:
-        rotate = 0
+        rotateX = 0
         thrust = -0.5
     elif choice == 5:
-        rotate = 1
+        rotateX = 1
         thrust = 0.5
     elif choice == 6:
-        rotate = -1
+        rotateX = -1
         thrust = 0.5
     elif choice == 7:
-        rotate = 1
+        rotateX = 1
         thrust = -0.5
     elif choice == 8:
-        rotate = 1
+        rotateX = 1
         thrust = 0.5
 
     return rotate, thrust
