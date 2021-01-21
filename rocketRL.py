@@ -7,7 +7,7 @@ import time
 
 style.use("ggplot")
 
-HM_EPISODES = 2000000
+HM_EPISODES = 1500000
 MOVE_PENALTY = 1
 LOSE_PENALTY = 300
 WIN_REWARD = 100
@@ -102,7 +102,7 @@ for episode in range(HM_EPISODES):
     
     episode_reward = 0
 
-    for i in range(250):
+    for i in range(1500):
 
         A = np.array([0., float(-g)])
 
