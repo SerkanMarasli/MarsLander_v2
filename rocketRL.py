@@ -7,13 +7,13 @@ import time
 
 style.use("ggplot")
 
-HM_EPISODES = 2000000
+HM_EPISODES = 1000000
 MOVE_PENALTY = 1
 LOSE_PENALTY = 300
 WIN_REWARD = 100
 epsilon = 0.999
 EPS_DECAY = 0.99999  # Every episode will be epsilon*EPS_DECAY
-SHOW_EVERY = 10000  # how often to play through env visually.
+SHOW_EVERY = 1000  # how often to play through env visually.
 
 LEARNING_RATE = 0.1
 DISCOUNT = 0.95
@@ -32,15 +32,15 @@ d = {1: (255, 175, 0),
      3: (0, 0, 255)}
 
 def WinSection():
-    WinSectionX_lower = 400
-    WinSectionX_upper = 450
-    WinSectionY = 200
+    WinSectionX_lower = 100
+    WinSectionX_upper = 150
+    WinSectionY = 75
     return WinSectionX_lower, WinSectionX_upper, WinSectionY
 
 def LoseSection():
-    LoseSectionX_lower = 400
-    LoseSectionX_upper = 450
-    LoseSectionY = 200 - 1
+    LoseSectionX_lower = 100
+    LoseSectionX_upper = 150
+    LoseSectionY = 75 - 1
     return LoseSectionX_lower, LoseSectionX_upper, LoseSectionY
 
 def action(choice):
@@ -78,7 +78,7 @@ def action(choice):
     return rotate, thrust
 
 if start_q_table is None:
-    q_table = -1*np.ones(shape=(500,700,9)) # inital start with -1
+    q_table = -1*np.ones(shape=(250,250,9)) # inital start with -1
 
 else:
     with open(start_q_table, "rb") as f:
@@ -87,7 +87,7 @@ else:
 episode_rewards = []
 
 for episode in range(HM_EPISODES):
-    X = [10., 499.]
+    X = [10., 249.]
     V = [0., 0.]
     A = np.array([0., float(-g)])
     rotate = 0
@@ -102,14 +102,14 @@ for episode in range(HM_EPISODES):
     
     episode_reward = 0
 
-    for i in range(1000):
+    for i in range(500):
 
-        if X[0] >= 700:
-            X[0] = 699
+        if X[0] >= 250:
+            X[0] = 249
         if X[0] <= 0:
             X[0] = 1
-        if X[1] >= 500:
-            X[1] = 499
+        if X[1] >= 250:
+            X[1] = 249
         if X[1] <= 0:
             X[1] = 1
 
@@ -122,6 +122,13 @@ for episode in range(HM_EPISODES):
 
         rotation, power = action(chosenaction)
 
+        if power >= 4:
+            power = 4
+        if rotation >= 90:
+            rotation = 90
+        if rotation <= -90:
+            rotation = -90
+
         rotate += rotation
         rotate_rad = rotate * np.pi / 180
 
@@ -131,12 +138,12 @@ for episode in range(HM_EPISODES):
 
         RoundedX = [round(X[0]), round(X[1])]
 
-        if RoundedX[0] >= 700:
-            RoundedX[0] = 699
+        if RoundedX[0] >= 250:
+            RoundedX[0] = 249
         if RoundedX[0] <= 0:
             RoundedX[0] = 1
-        if RoundedX[1] >= 500:
-            RoundedX[1] = 499
+        if RoundedX[1] >= 249:
+            RoundedX[1] = 249
         if RoundedX[1] <= 0:
             RoundedX[1] = 1
 
@@ -171,7 +178,7 @@ for episode in range(HM_EPISODES):
 
     episode_rewards.append(episode_reward)
 
-    if epsilon > 30:
+    if epsilon > 0.15:
         epsilon *= EPS_DECAY
 
 moving_avg = np.convolve(episode_rewards, np.ones((SHOW_EVERY,))/SHOW_EVERY, mode='valid')
