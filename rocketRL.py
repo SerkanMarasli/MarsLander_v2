@@ -150,8 +150,8 @@ for episode in range(HM_EPISODES):
         if (RoundedX[0] > win_lower and RoundedX[0] < win_upper) and (RoundedX[1] == win_y) \
             and (V[0] <= 20 and V[1] <= 40) and (rotate <= 10):
             reward == WIN_REWARD
-        elif (RoundedX[0] > win_lower and RoundedX[0] < win_upper) and (RoundedX[1] == win_y):
-            reward = WIN_REWARD/10
+        #elif (RoundedX[0] > win_lower and RoundedX[0] < win_upper) and (RoundedX[1] == win_y):
+           # reward = WIN_REWARD/10
         elif (RoundedX[0] > win_lower and RoundedX[0] < win_upper) and (RoundedX[1] == lose_y):
             reward = -LOSE_PENALTY
         elif RoundedX[1] <= 5:
@@ -178,7 +178,7 @@ for episode in range(HM_EPISODES):
 
     episode_rewards.append(episode_reward)
 
-    if epsilon > 0.15:
+    if epsilon > 0.3:
         epsilon *= EPS_DECAY
 
 moving_avg = np.convolve(episode_rewards, np.ones((SHOW_EVERY,))/SHOW_EVERY, mode='valid')
