@@ -89,7 +89,6 @@ episode_rewards = []
 for episode in range(HM_EPISODES):
     X = [10., 249.]
     V = [0., 0.]
-    A = np.array([0., float(-g)])
     rotate = 0
     win_lower, win_upper, win_y = WinSection()
     lose_lower, lose_upper, lose_y = LoseSection()
@@ -103,6 +102,8 @@ for episode in range(HM_EPISODES):
     episode_reward = 0
 
     for i in range(250):
+
+        A = np.array([0., float(-g)])
 
         if X[0] >= 250:
             X[0] = 249
@@ -122,17 +123,24 @@ for episode in range(HM_EPISODES):
 
         rotation, power = action(chosenaction)
 
-        if power >= 4:
-            power = 4
-        if rotation >= 90:
-            rotation = 90
-        if rotation <= -90:
-            rotation = -90
-
         rotate += rotation
+
+        if rotate >= 90:
+            rotate = 90
+        elif rotate <= -90:
+            rotate = -90
+
         rotate_rad = rotate * np.pi / 180
 
-        A += power*np.array([np.sin(rotate_rad), np.cos(rotate_rad)])
+        cumulativePower = 0
+        cumulativePower += power
+
+        if cumulativePower >= 5:
+            cumulativePower = 5
+        elif cumulativePower <= 0:
+            cumulativePower = 0
+
+        A += cumulativePower*np.array([np.sin(rotate_rad), np.cos(rotate_rad)])
         V += A * dt
         X += V * dt
 
