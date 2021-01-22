@@ -7,13 +7,13 @@ import time
 
 style.use("ggplot")
 
-HM_EPISODES = 1000000
+HM_EPISODES = 20000000
 MOVE_PENALTY = 1
 LOSE_PENALTY = 300
 WIN_REWARD = 100
 epsilon = 0.999
 EPS_DECAY = 0.99999  # Every episode will be epsilon*EPS_DECAY
-SHOW_EVERY = 10000  # how often to play through env visually.
+SHOW_EVERY = 100000  # how often to play through env visually.
 
 LEARNING_RATE = 0.1
 DISCOUNT = 0.95
@@ -22,7 +22,7 @@ ROCKET_N = 1  # player key in dict
 WIN_CONDITION_N = 2  # food key in dict
 LOSE_N = 3  # enemy key in dict
 
-start_q_table = None # None or Filename
+start_q_table = "qtable-1611312627.pickle" # None or Filename
 
 g = 3.711
 
@@ -156,10 +156,10 @@ for episode in range(HM_EPISODES):
             RoundedX[1] = 1
 
         if (RoundedX[0] > win_lower and RoundedX[0] < win_upper) and (RoundedX[1] == win_y) \
-            and (V[0] <= 20 and V[1] <= 40) and (rotate <= 10):
+            and (abs(V[0]) <= 20 and abs(V[1] <= 40)) and (abs(rotate) <= 10): #add abs
             reward == WIN_REWARD
-        #elif (RoundedX[0] > win_lower and RoundedX[0] < win_upper) and (RoundedX[1] == win_y):
-           # reward = WIN_REWARD/10
+        elif (RoundedX[0] > win_lower and RoundedX[0] < win_upper) and (RoundedX[1] == win_y):
+            reward = WIN_REWARD/10
         elif (RoundedX[0] > win_lower and RoundedX[0] < win_upper) and (RoundedX[1] == lose_y):
             reward = -LOSE_PENALTY
         elif RoundedX[1] <= 5:
