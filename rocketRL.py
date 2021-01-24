@@ -157,7 +157,7 @@ for episode in range(HM_EPISODES):
 
         if (RoundedX[0] > win_lower and RoundedX[0] < win_upper) and (RoundedX[1] == win_y) \
             and (abs(V[0]) <= 20 and abs(V[1] <= 40)) and (abs(rotate) <= 10): #add abs
-            reward == WIN_REWARD
+            reward = WIN_REWARD
         elif (RoundedX[0] > win_lower and RoundedX[0] < win_upper) and (RoundedX[1] == win_y):
             reward = WIN_REWARD/10
         elif (RoundedX[0] > win_lower and RoundedX[0] < win_upper) and (RoundedX[1] == lose_y):
