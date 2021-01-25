@@ -16,15 +16,15 @@ style.use("ggplot")
 HM_EPISODES = 2000000
 MOVE_PENALTY = 1
 LOSE_PENALTY = 100
-WIN_REWARD = 1000
+WIN_REWARD = 10000
 epsilon = 0.999
 EPS_DECAY = 0.99999  # Every episode will be epsilon*EPS_DECAY
-SHOW_EVERY = 100000  # how often to play through env visually.
+SHOW_EVERY = 15000  # how often to play through env visually.
 
-LEARNING_RATE = 0.0001
+LEARNING_RATE = 0.01
 DISCOUNT = 0.95
 
-start_q_table = 0
+start_q_table = 1
 
 g = 0.3711 # need to change back
 
@@ -121,7 +121,7 @@ def action(choice):
 if start_q_table is None:
     q_table = -1*np.ones(shape=(20,20,9)) # inital start with -1
 else:
-    q_table = np.load("")
+    q_table = np.load("q_table.npy")
 
 print(q_table)
 
@@ -216,7 +216,10 @@ for episode in range(HM_EPISODES):
 
         current_q = q_table[obs][chosenaction]
 
-        new_q = current_q + LEARNING_RATE * (reward + DISCOUNT * max_future_q - current_q)
+        if reward == WIN_REWARD:
+            new_q = WIN_REWARD
+        else:
+            new_q = current_q + LEARNING_RATE * (reward + DISCOUNT * max_future_q - current_q)
 
         q_table[obs][chosenaction] = new_q
 
