@@ -13,20 +13,26 @@ from matplotlib import rcParams
 
 style.use("ggplot")
 
-HM_EPISODES = 2000000
+HM_EPISODES = 1000
 MOVE_PENALTY = 1
 LOSE_PENALTY = 100
 WIN_REWARD = 10000
 epsilon = 0.999
 EPS_DECAY = 0.99999  # Every episode will be epsilon*EPS_DECAY
-SHOW_EVERY = 15000  # how often to play through env visually.
+SHOW_EVERY = 100   # how often to play through env visually.
 
-LEARNING_RATE = 0.01
+LEARNING_RATE = 0.2
 DISCOUNT = 0.95
 
-start_q_table = None
+start_q_table = 1
 
 g = 3.711 # need to change back
+
+def plot_lander(land, landing_site, X):
+    ax = plot_surface(land, landing_site) 
+    ax.plot(X[:, 0], X[:, 1], 'b--')
+    ax.plot(X[-1, 0], X[-1, 1], 'b^')
+    return ax
 
 def mars_surface():
     surfaceN = randint(5, 15)
@@ -67,7 +73,7 @@ def plot_surface(land, landing_site):
 
 np.random.seed(56) # seed random number generator for reproducible results
 land, landing_site = mars_surface()
-plot_surface(land, landing_site)
+#plot_surface(land, landing_site)
 
 def interpolate_surface(land, x):          # height at any given x
     newarray = []
@@ -114,7 +120,7 @@ def action(choice):
 if start_q_table is None:
     q_table = -1*np.ones(shape=(500,700,5)) # inital start with -1
 else:
-    q_table = np.load("q_table.npy")
+    q_table = np.load("q_table-500x700.npy")
 
 print(q_table)
 
@@ -128,7 +134,9 @@ for episode in range(HM_EPISODES):
     V = [0., 0.]
     rotate = 0
     cumulativePower = 0
+    Xhist = np.zeros((1000,2))
     dt = 0.1
+    counter = 0
 
     if episode % SHOW_EVERY == 0:
         print(f"on #{episode}, epsilon is {epsilon}")
@@ -140,8 +148,8 @@ for episode in range(HM_EPISODES):
 
         A = np.array([0., float(-g)])
 
-        if X[0] >= 500:
-            X[0] = 499
+        if X[0] >= 700:
+            X[0] = 699
         if X[0] <= 0:
             X[0] = 1
         if X[1] >= 500:
@@ -180,8 +188,8 @@ for episode in range(HM_EPISODES):
 
         RoundedX = [math.floor(X[0]), math.floor(X[1])]
 
-        if RoundedX[0] >= 500:
-            RoundedX[0] = 499
+        if RoundedX[0] >= 700:
+            RoundedX[0] = 699
         if RoundedX[0] <= 0:
             RoundedX[0] = 1
         if RoundedX[1] >= 500:
@@ -216,9 +224,20 @@ for episode in range(HM_EPISODES):
 
         q_table[obs][chosenaction] = new_q
 
+        Xhist[i,:] = X
+
         episode_reward += reward
         if X[1] < interpolate_surface(land, X[0]):
             break
+        
+    
+    # fix this 
+    if episode % 1000 == 0 or reward == WIN_REWARD:
+        plot_lander(land, landing_site, Xhist[:i])
+        plt.title(f'episode reward = {episode_reward}')
+        plt.savefig(f'plotcount_{counter:05d}.png')
+        counter += 1
+
 
     episode_rewards.append(episode_reward)
 
@@ -227,14 +246,15 @@ for episode in range(HM_EPISODES):
 
 moving_avg = np.convolve(episode_rewards, np.ones((SHOW_EVERY,))/SHOW_EVERY, mode='valid')
 
-plt.plot([i for i in range(len(moving_avg))], moving_avg)
+fig, ax = plt.subplots()
+ax.plot([i for i in range(len(moving_avg))], moving_avg)
 plt.ylabel(f"Reward {SHOW_EVERY}ma")
 plt.xlabel("episode #")
 plt.show()
 print(A1)
 print(A2)
 
-np.save("q_table", q_table)
+np.save("q_table-500x700", q_table)
 
 with open(f"qtable-{int(time.time())}.pickle", "wb") as f:
     pickle.dump(q_table, f)
