@@ -76,16 +76,7 @@ land, landing_site = mars_surface()
 #plot_surface(land, landing_site)
 
 def interpolate_surface(land, x):          # height at any given x
-    newarray = []
-    for pair in land:
-        if pair[0] < x:
-            newarray.append(1)
-    i = len(newarray)-2
-
-    #try:
-    #    i, = np.argwhere(land[:, 0] < x)[-1] # segment containing x is [i, i+1]
-    #except:
-    #    i, = np.argwhere(land[:, 0] < x)[0]
+    i, = np.argwhere(land[:, 0] < x)[0]
     m = (land[i+1, 1] - land[i, 1])/(land[i+1, 0] - land[i, 0]) # gradient
     x1, y1 = land[i, :] # point on line with eqn. y - y1 = m(x - x1) 
     return m*(x - x1) + y1
@@ -98,10 +89,10 @@ def action(choice):
         rotateX = 0
         thrust = 0
     elif choice == 1:
-        rotateX = -5
+        rotateX = -2.5
         thrust = 0
     elif choice == 2:
-        rotateX = 5
+        rotateX = 2.5
         thrust = 0
     elif choice == 3:
         rotateX = 0
@@ -129,9 +120,10 @@ A1 = 0
 A2 = 0
 
 counter = 0
+amount_of_wins = 0
 
 for episode in range(HM_EPISODES):
-    X = [10., 50.]
+    X = [5., 50.]
     V = [0., 0.]
     rotate = 0
     cumulativePower = 0
@@ -200,7 +192,7 @@ for episode in range(HM_EPISODES):
 
         if X[1] < interpolate_surface(land, X[0]):
             if (land[landing_site, 0] <= X[0] and X[0] <= land[landing_site + 1, 0]) and \
-                (abs(V[0]) <= 20 and abs(V[1] <= 40)) and (abs(rotate) <= 10):
+                (abs(V[0]) <= 20 and abs(V[1] <= 40)) and (abs(rotate) <= 5):
                 reward = WIN_REWARD
                 A1 += 1
             #elif (land[landing_site, 0] <= X[0] and X[0] <= land[landing_site + 1, 0]):
@@ -233,12 +225,11 @@ for episode in range(HM_EPISODES):
         
     
     # fix this 
-    if episode % 100000 == 0 or reward == WIN_REWARD:
+    if episode % 50000 == 0:
         plot_lander(land, landing_site, Xhist[:i])
         plt.title(f'episode reward = {episode_reward}')
         plt.savefig(f'plotcount_{counter:05d}.png')
         counter += 1
-
 
     episode_rewards.append(episode_reward)
 
