@@ -128,6 +128,7 @@ episode_rewards = []
 A1 = 0
 A2 = 0
 
+counter = 0
 
 for episode in range(HM_EPISODES):
     X = [100., 500.]
@@ -136,7 +137,7 @@ for episode in range(HM_EPISODES):
     cumulativePower = 0
     Xhist = np.zeros((1000,2))
     dt = 0.1
-    counter = 0
+    
 
     if episode % SHOW_EVERY == 0:
         print(f"on #{episode}, epsilon is {epsilon}")
