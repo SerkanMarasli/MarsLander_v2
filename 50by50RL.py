@@ -13,13 +13,13 @@ from matplotlib import rcParams
 
 style.use("ggplot")
 
-HM_EPISODES = 2000000
+HM_EPISODES = 1000000
 MOVE_PENALTY = 1
 LOSE_PENALTY = 100
-WIN_REWARD = 10000
-epsilon = 0.999
-EPS_DECAY = 0.99999  # Every episode will be epsilon*EPS_DECAY
-SHOW_EVERY = 10000   # how often to play through env visually.
+WIN_REWARD = 1000
+epsilon = 0.99999
+EPS_DECAY = 0.9999  # Every episode will be epsilon*EPS_DECAY
+SHOW_EVERY = 5000   # how often to play through env visually.
 
 LEARNING_RATE = 0.01
 DISCOUNT = 0.95
@@ -76,7 +76,7 @@ land, landing_site = mars_surface()
 #plot_surface(land, landing_site)
 
 def interpolate_surface(land, x):          # height at any given x
-    i, = np.argwhere(land[:, 0] < x)[0]
+    i = len(np.argwhere(land[:, 0] < x)) - 1
     m = (land[i+1, 1] - land[i, 1])/(land[i+1, 0] - land[i, 0]) # gradient
     x1, y1 = land[i, :] # point on line with eqn. y - y1 = m(x - x1) 
     return m*(x - x1) + y1
@@ -111,7 +111,7 @@ def action(choice):
 if start_q_table is None:
     q_table = -1*np.ones(shape=(50,50,5)) # inital start with -1
 else:
-    q_table = np.load("")
+    q_table = np.load("q_table-50by50.npy")
 
 print(q_table)
 
@@ -179,6 +179,15 @@ for episode in range(HM_EPISODES):
         V += A * dt
         X += V * dt
 
+        if X[0] >= 50:
+            X[0] = 49
+        if X[0] <= 0:
+            X[0] = 1
+        if X[1] >= 50:
+            X[1] = 49
+        if X[1] <= 0:
+            X[1] = 1
+
         RoundedX = [math.floor(X[0]), math.floor(X[1])]
 
         if RoundedX[0] >= 50:
@@ -210,10 +219,10 @@ for episode in range(HM_EPISODES):
 
         current_q = q_table[obs][chosenaction]
 
-        if reward == WIN_REWARD:
-            new_q = WIN_REWARD
-        else:
-            new_q = current_q + LEARNING_RATE * (reward + DISCOUNT * max_future_q - current_q)
+        #if reward == WIN_REWARD:
+        #    new_q = WIN_REWARD
+        #else:
+        new_q = current_q + LEARNING_RATE * (reward + DISCOUNT * max_future_q - current_q)
 
         q_table[obs][chosenaction] = new_q
 
@@ -225,10 +234,10 @@ for episode in range(HM_EPISODES):
         
     
     # fix this 
-    if episode % 50000 == 0:
+    if episode % 20000 == 0:
         plot_lander(land, landing_site, Xhist[:i])
         plt.title(f'episode reward = {episode_reward}')
-        plt.savefig(f'plotcount_{counter:05d}.png')
+        plt.savefig(f'Figures/plotcount_{counter:05d}_ep_{episode:05d}.png')
         counter += 1
 
     episode_rewards.append(episode_reward)
