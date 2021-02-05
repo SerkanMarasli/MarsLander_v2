@@ -15,8 +15,8 @@ style.use("ggplot")
 
 HM_EPISODES = 1000000
 MOVE_PENALTY = 1
-LOSE_PENALTY = 100
-WIN_REWARD = 1000
+LOSE_PENALTY = 300
+WIN_REWARD = 10000
 epsilon = 0.99999
 EPS_DECAY = 0.9999  # Every episode will be epsilon*EPS_DECAY
 SHOW_EVERY = 5000   # how often to play through env visually.
@@ -111,7 +111,7 @@ def action(choice):
 if start_q_table is None:
     q_table = -1*np.ones(shape=(50,50,5)) # inital start with -1
 else:
-    q_table = np.load("q_table-50by50.npy")
+    q_table = np.load("")
 
 print(q_table)
 
@@ -121,9 +121,10 @@ A2 = 0
 
 counter = 0
 amount_of_wins = 0
+highest_rewards = []
 
 for episode in range(HM_EPISODES):
-    X = [5., 50.]
+    X = [45., 50.]
     V = [0., 0.]
     rotate = 0
     cumulativePower = 0
@@ -200,8 +201,8 @@ for episode in range(HM_EPISODES):
             RoundedX[1] = 1
 
         if X[1] < interpolate_surface(land, X[0]):
-            if (land[landing_site, 0] <= X[0] and X[0] <= land[landing_site + 1, 0]) and \
-                (abs(V[0]) <= 20 and abs(V[1] <= 40)) and (abs(rotate) <= 5):
+            if land[landing_site, 0] <= X[0] and X[0] <= land[landing_site + 1, 0] and \
+                abs(V[0]) <= 20 and abs(V[1] <= 40) and abs(rotate) <= 5:
                 reward = WIN_REWARD
                 A1 += 1
             #elif (land[landing_site, 0] <= X[0] and X[0] <= land[landing_site + 1, 0]):
@@ -222,7 +223,7 @@ for episode in range(HM_EPISODES):
         #if reward == WIN_REWARD:
         #    new_q = WIN_REWARD
         #else:
-        new_q = current_q + LEARNING_RATE * (reward + DISCOUNT * max_future_q - current_q)
+        new_q = ((1-LEARNING_RATE) * current_q) + (LEARNING_RATE * (reward + DISCOUNT * max_future_q))
 
         q_table[obs][chosenaction] = new_q
 
@@ -231,14 +232,17 @@ for episode in range(HM_EPISODES):
         episode_reward += reward
         if X[1] < interpolate_surface(land, X[0]):
             break
-        
+
     
     # fix this 
-    if episode % 20000 == 0:
+    if episode % 50000 == 0 or (episode_reward >= 9850 and episode_reward not in highest_rewards):
         plot_lander(land, landing_site, Xhist[:i])
         plt.title(f'episode reward = {episode_reward}')
-        plt.savefig(f'Figures/plotcount_{counter:05d}_ep_{episode:05d}.png')
+        plt.savefig(f'Figures/count_{counter:05d}_reward_{episode_reward:05d}_ep_{episode:05d}.png')
         counter += 1
+
+        if episode_reward >= 900:
+            highest_rewards.append(episode_reward)
 
     episode_rewards.append(episode_reward)
 
