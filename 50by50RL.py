@@ -19,10 +19,10 @@ LOSE_PENALTY = 300
 WIN_REWARD = 10000
 epsilon = 0.99999
 EPS_DECAY = 0.9999  # Every episode will be epsilon*EPS_DECAY
-SHOW_EVERY = 5000   # how often to play through env visually.
+SHOW_EVERY = 500   # how often to play through env visually.
 
 LEARNING_RATE = 0.01
-DISCOUNT = 0.95
+DISCOUNT = 0.85
 
 start_q_table = None
 
@@ -124,7 +124,7 @@ amount_of_wins = 0
 highest_rewards = []
 
 for episode in range(HM_EPISODES):
-    X = [45., 50.]
+    X = [5., 50.]
     V = [0., 0.]
     rotate = 0
     cumulativePower = 0
@@ -233,15 +233,17 @@ for episode in range(HM_EPISODES):
         if X[1] < interpolate_surface(land, X[0]):
             break
 
-    
+    counter = int(counter)
+    episode_reward = int(episode_reward)
+    episode = int(episode)
     # fix this 
-    if episode % 50000 == 0 or (episode_reward >= 9850 and episode_reward not in highest_rewards):
+    if episode % 50000 == 0: #or (episode_reward >= 9850 and episode_reward not in highest_rewards):
         plot_lander(land, landing_site, Xhist[:i])
         plt.title(f'episode reward = {episode_reward}')
         plt.savefig(f'Figures/count_{counter:05d}_reward_{episode_reward:05d}_ep_{episode:05d}.png')
         counter += 1
 
-        if episode_reward >= 900:
+        if episode_reward >= 50:
             highest_rewards.append(episode_reward)
 
     episode_rewards.append(episode_reward)
@@ -263,4 +265,4 @@ np.save("q_table-50by50", q_table)
 
 with open(f"qtable-{int(time.time())}.pickle", "wb") as f:
     pickle.dump(q_table, f)
-# %%
+www# %%
