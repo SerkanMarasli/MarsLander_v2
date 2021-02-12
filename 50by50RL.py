@@ -21,8 +21,8 @@ epsilon = 0.99999
 EPS_DECAY = 0.9999  # Every episode will be epsilon*EPS_DECAY
 SHOW_EVERY = 500   # how often to play through env visually.
 
-LEARNING_RATE = 0.01
-DISCOUNT = 0.85
+LEARNING_RATE = 0.001
+DISCOUNT = 0.8
 
 start_q_table = None
 
