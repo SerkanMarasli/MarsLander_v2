@@ -70,6 +70,7 @@ def plot_lander(land, landing_site, X, thrust=None, animate=False, step=10):
                 ax.plot([X[n, 0], X[n, 0] - 1*thrust[n, 0]],
                         [X[n, 1] - 1., X[n, 1] - 1. - 1*thrust[n, 1]], 
                        'r-', lw=10)
+            #plt.savefig('plot6')           
         return interactive(plot_frame, n=(0, len(X), step))
     else:
         ax = plot_surface(land, landing_site) 
@@ -178,9 +179,9 @@ def simulate(X0, V0, land, landing_site,
                 print("crash! did not land on flat ground!")
             elif abs(rotate) >= 5:
                 print("crash! did not land in a vertical position (tilt angle = 0 degrees)")
-            elif abs(V[1]) >= 40:
+            elif abs(V[1]) >= 20:
                 print("crash! vertical speed must be limited (<40m/s in absolute value), got ", abs(V[1]))
-            elif abs(V[0]) >= 20:
+            elif abs(V[0]) >= 10:
                 print("crash! horizontal speed must be limited (<20m/s in absolute value), got ", abs(V[0]))
             else:
                 print("safe landing - well done!")

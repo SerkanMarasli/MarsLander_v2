@@ -21,7 +21,7 @@ epsilon = 0.99999
 EPS_DECAY = 0.9999  # Every episode will be epsilon*EPS_DECAY
 SHOW_EVERY = 500   # how often to play through env visually.
 
-LEARNING_RATE = 0.01
+LEARNING_RATE = 0.001
 DISCOUNT = 0.95
 
 start_q_table = None
@@ -156,7 +156,7 @@ for episode in range(HM_EPISODES):
         if np.random.uniform(0,1) > epsilon:
             chosenaction = np.argmax(q_table[obs])
         else:
-            chosenaction = np.random.randint(0, 5)
+            chosenaction = np.random.randint(0, 4)
 
         rotation, power = action(chosenaction)
 
