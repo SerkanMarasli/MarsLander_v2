@@ -18,10 +18,7 @@ from matplotlib import rcParams
 
 rcParams['figure.figsize'] = (10, 8)
 
-
 #INITIALLISATION
-
-
 
 def mars_surface():
     surfaceN = randint(5, 15)
@@ -88,37 +85,10 @@ def interpolate_surface(land, x):          # height at any given x
     x1, y1 = land[i, :] # point on line with eqn. y - y1 = m(x - x1) 
     return m*(x - x1) + y1
 
-'''
-x = 2000 # try varying x and testing if function works as expected
-y = interpolate_surface(land, x)
-plot_surface(land, landing_site)
-plt.plot(x, y, 'bo')
-'''
-
 def height(land, X):
     return X[1] - interpolate_surface(land, X[0])
 
-'''
-assert abs(height(land, [1, land[0, 1]])) < 100.0 # height when on surface left edge should be close to zero
-assert abs(height(land, [6999, land[-1, 1]])) < 100.0 # height when on surface at right edge should be close to zero
-
-
-_land, _landing_site = mars_surface()
-
-def _height(_land, X):
-    return X[1] - interpolate_surface(_land, X[0])
-
-points = np.zeros((10, 2))
-points[:, 0] = randint(0, 7000, size=10)
-points[:, 1] = randint(0, 3000, size=10)
-for i in range(10):
-    assert abs(height(_land, points[i, :]) - _height(_land, points[i, :])) < 1e-6
-'''
-
-
 # SIMULATE
-
-
 
 g = 3.711 # m/s^2, gravity on Mars
 
@@ -142,9 +112,6 @@ def simulate(X0, V0, land, landing_site,
     for i in range(Nstep):
         Xs[i, :] = X     # Store positions   
         Vs[i, :] = V     # Store velocities -
-        
- # Vs[:i,:].sum(axis=0) would give [sum(vx), sum(vy)] up to step i
- # change in velocity would be (Vs[i, :] - Vs[i-1, :]) / dt
 
         if autopilot is not None:
             # call user-supplied function to set `rotate` and `power`
@@ -191,53 +158,11 @@ def simulate(X0, V0, land, landing_site,
     
     return Xs[:Nstep,:], Vs[:Nstep,:], thrust[:Nstep,:], success, Es[:Nstep], Rs[:Nstep]
 
-'''
-X0 = [(land[landing_site+1, 0] + land[landing_site, 0]) // 2, 3000]
-V0 = [0.0, 0.0]
-Xs, Vs, thrust, success = simulate(X0, V0, land, landing_site)
-plot_lander(land, landing_site, Xs, thrust, animate=True, step=10)
-'''
-
 m = 100. # mass of lander in kg
 dt = 0.1
 
-'''
-Nstep = int((1.0 / dt) + 1) # number of steps required for 1 second of simulated time
-Xs, Vs, thrust, success = simulate(X0, V0, land, landing_site, dt=dt, Nstep=Nstep)
-
-t = np.array([dt*i for i in range(Nstep) ])
-V = np.array([ m*g*Xs[i, 1] for i in range(Nstep) ])
-T = np.array([ 0.5*m*norm(Vs[i, :])**2 for i in range(Nstep) ])
-E = T + V
-
-fig, ax = plt.subplots()
-ax.plot(t, abs(E - E[0])/E[0], label="Total energy drift")
-ax.set_xlabel('Time / s')
-ax.set_ylabel('Energy drift')
-ax.legend()
-
-assert t[0] == 0.0
-assert t[-1] >= 1.0
-assert len(t) == len(E) == Nstep
-assert abs(E[-1] - E[0])/E[0] < 1e-3
-'''
-
 def dummy_autopilot(i, X, V, fuel, rotate, power):
    return (rotate, power) # do nothing
-
-'''
-X0 = [(land[landing_site+1, 0] + land[landing_site, 0]) // 2, 3000]
-V0 = [0., 0.]
-Xs, Vs, thrust, success = simulate(X0, V0, land, landing_site, dt=dt, autopilot=dummy_autopilot)
-plot_lander(land, landing_site, Xs, thrust, animate=True, step=10)
-'''
-
-
-#AUTOPILOT
-
-# for 2D:
-# either look at mag of velocity and have separate error for rotation
-# or look at look at Vx and Vy separately and look into the rotation as a function of these
 
 def proportional_autopilot(Es, i, X, V, fuel, rotate, power):
     # Xs, Vs, dt, e_history as arguments
@@ -250,8 +175,6 @@ def proportional_autopilot(Es, i, X, V, fuel, rotate, power):
     horizontaltarget = 1
     h = height(land, X)
 
-    #write about tuning the parameters and look at how to do it automatically
-
     dE = (Es[i] - Es[i-1])/dt # derivative component
 
     sumERROR = 0 # sum of the errors not including the first and last (for trap rule)
@@ -259,74 +182,21 @@ def proportional_autopilot(Es, i, X, V, fuel, rotate, power):
         sumERROR += Es[j+1]
 
     eIntegral = 0.5*dt*(Es[0] + Es[i] + 2*(sumERROR)) # integral component using Trapezium Rule
-    # scipy.integrate.quad (for integral)
-    # numpy.trapz (for integral)
-
-    #e_vertical = - (c + K_h * h  + V[1]))
-    #e_horizontal = - (ch + K_h2 * abs(diff between current and landing pos) + V[0])
-
-    #power = f(e_vetical, e_horizontal) e.g. sqrt eh^2 + ev^2
-    #rotation = g(e_vertical, e_horizontal) e.g. arctan(e_v / e_h)
  
     xdiff = (X[0] - ((land[landing_site+1, 0] + land[landing_site, 0]) // 2))
     ydiff = X[1] - (land[landing_site, 1]) 
 
-
-
     e = - (c + K_h*h + V[1])
     e_h = - (V[0] + horizontaltarget + k_horizontal*xdiff)
 
-    #e_history[i] = e
-    # (e(t)-e(t-dt))/dt) 
-    #de = de/dt = - (0 + d/dt(K_h * h) + d/dt(V[1])
-    #           = K_h * d/dt(X[1]) + d/dt(V[1])
-    #         ~= K_h * (Xs[i, 1] - Xs[i-1, 1])/dt + (Vs[i, 1] - Vs[i-1, 1])/dt
-    #diagram of geometry
     Pout = K_p*e + K_i*eIntegral + K_d*dE
     power = min(max(Pout, 0.0), 5)
     angle = min(90,max(np.arctan2(e_h,e)*(180/np.pi),-90))
     rotate = angle
-    # print out e_h/e and angle to see what's causing problem
     
-    '''
-    if X[0] < ((land[landing_site+1, 0] + land[landing_site, 0]) // 2):
-        
-        xdiff = (((land[landing_site+1, 0] + land[landing_site, 0]) // 2) - X[0])
-        ydiff = X[1] - (land[landing_site, 1])
-        # +500 to give 500m space between landing and rotating, therefore, it can land where rotation = 0
-        rotateradians = np.arctan((xdiff/ydiff))
-        rotate = (rotateradians * 180/np.pi)
-
-        # look into atan2... arctan2... to do above
-        # adjust above such that it takes into account gradient
-        
-        if V[0] >= 15:
-            rotate = -30
-        
-        
-    elif X[0] > ((land[landing_site+1, 0] + land[landing_site, 0]) // 2):
-        
-        xdiff = (X[0] - ((land[landing_site+1, 0] + land[landing_site, 0]) // 2))
-        ydiff = X[1] - (land[landing_site, 1])
-        # +500 to give 500m space between landing and rotating, therefore, it can land where rotation = 0
-        rotateradians = np.arctan((xdiff/ydiff))
-        rotate = -(rotateradians * 180/np.pi)
-
-        # look into atan2... arctan2... to do above
-        # adjust above such that it takes into account gradient
-        # try to use arctan2 to simplify above
-        
-        if V[0] <= -15:
-            rotate = 30
-    '''
-
     if i % 10 == 0:
         print(f'e={e:8.3f} Pout={Pout:8.3f} power={power:8.3f} rotation={rotate:8.3f}')
     return (rotate, power, e)
-
-
-## testing different constant values
-
 
 X0 = [45, 50]
 V0 = [0., 0.]
@@ -335,10 +205,6 @@ Xs, Vs, thrust, success, Es, Rs = simulate(X0, V0, land, landing_site, dt=0.1, N
 plot_lander(land, landing_site, Xs, thrust, animate=True, step=1)# %%
 
 
-#print(Vs)
-#versions of plots to compare different settings on same graph
-#look into plotting PD and PI controllers
-#plot fuel use over time
-
+# %%
 
 # %%
