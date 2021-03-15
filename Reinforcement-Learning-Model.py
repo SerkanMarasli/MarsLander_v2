@@ -101,10 +101,6 @@ def action(choice):
         rotateX = 0
         thrust = -1
 
-
-
-
-
     return rotateX, thrust
 
 
@@ -206,9 +202,6 @@ for episode in range(HM_EPISODES):
                 abs(V[0]) <= 10 and abs(V[1] <= 20) and abs(rotate) <= 5:
                 reward = WIN_REWARD
                 A1 += 1
-            #elif (land[landing_site, 0] <= X[0] and X[0] <= land[landing_site + 1, 0]):
-                #reward = WIN_REWARD/10
-                #A2 += 1
             else:
                 reward = -LOSE_PENALTY
         else:
@@ -221,9 +214,6 @@ for episode in range(HM_EPISODES):
 
         current_q = q_table[obs][chosenaction]
 
-        #if reward == WIN_REWARD:
-        #    new_q = WIN_REWARD
-        #else:
         new_q = ((1-LEARNING_RATE) * current_q) + (LEARNING_RATE * (reward + DISCOUNT * max_future_q))
 
         q_table[obs][chosenaction] = new_q
@@ -237,13 +227,11 @@ for episode in range(HM_EPISODES):
     counter = int(counter)
     episode_reward = int(episode_reward)
     episode = int(episode)
-    # fix this 
-    if episode % 25000 == 0: #or (episode_reward >= 9850 and episode_reward not in highest_rewards):
+    if episode % 25000 == 0: 
         plot_lander(land, landing_site, Xhist[:i])
         plt.title(f'episode reward = {episode_reward}')
         plt.savefig(f'Figures2/count_{counter:05d}_ep_{episode:05d}_reward_{episode_reward:05d}.png')
         counter += 1
-
 
     episode_rewards.append(episode_reward)
 
